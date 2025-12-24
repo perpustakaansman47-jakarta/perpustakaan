@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Perpustakaan SMAN 47 Jakarta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .login-box {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .login-box h2 {
+            color: #1e88e5;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1e88e5;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30, 136, 229, 0.4);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-card {
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .menu-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .color-green { background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); }
+        .color-blue { background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); }
+        .color-orange { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+        .color-purple { background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); }
+        .color-red { background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); }
+        .color-grey { background: linear-gradient(135deg, #607d8b 0%, #455a64 100%); }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .data-table thead {
+            background: #1e88e5;
+            color: white;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        .btn-success { background: #4caf50; }
+        .btn-danger { background: #f44336; }
+        .btn-info { background: #2196f3; }
+        .btn-warning { background: #ff9800; }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #607d8b;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-inline input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 11px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .page-title {
+            color: #1e88e5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏫 SMAN 47 JAKARTA</h1>
+            <p>Sistem Perpustakaan Digital</p>
+        </div>
+
+        <div class="content">
+            <!-- LOGIN -->
+            <div id="loginPage" class="login-box">
+                <h2>LOGIN ADMIN</h2>
+                <div id="loginAlert"></div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>👤 Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn">LOGIN</button>
+                </form>
+            </div>
+
+            <!-- MENU -->
+            <div id="mainMenu" class="hidden">
+                <h2 style="text-align: center; margin-bottom: 10px;">Selamat Datang, <span id="adminName"></span></h2>
+                <p style="text-align: center; color: #666; margin-bottom: 30px;">Pilih menu di bawah</p>
+                
+                <div class="menu-grid">
+                    <div class="menu-card color-green" onclick="showPage('peminjamanPage')">
+                        <div class="icon">📖</div>
+                        <h3>Input Peminjaman</h3>
+                    </div>
+                    <div class="menu-card color-blue" onclick="showPage('lihatPeminjamanPage')">
+                        <div class="icon">📋</div>
+                        <h3>Lihat Peminjaman</h3>
+                    </div>
+                    <div class="menu-card color-orange" onclick="showPage('pengembalianPage')">
+                        <div class="icon">✅</div>
+                        <h3>Pengembalian Buku</h3>
+                    </div>
+                    <div class="menu-card color-purple" onclick="showPage('dataSiswaPage')">
+                        <div class="icon">👥</div>
+                        <h3>Data Siswa</h3>
+                    </div>
+                    <div class="menu-card color-red" onclick="showPage('dataBukuPage')">
+                        <div class="icon">📚</div>
+                        <h3>Data Buku</h3>
+                    </div>
+                    <div class="menu-card color-grey" onclick="logout()">
+                        <div class="icon">🚪</div>
+                        <h3>Logout</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PEMINJAMAN -->
+            <div id="peminjamanPage" class="hidden">
+                <a href="#" class="back-btn" onclick="showPage('mainMenu'); return false;">← Kembali</a>
+                <h2 class="page-title">📖 Input Peminjaman Buku</h2>
+                <div id="peminjamanAlert"></div>
+                
+                <form onsubmit="submitPeminjaman(event)">
+                    <div class="form-group">
+                        <label>👤 Nama Siswa</label>
+                        <input type="text" id="namaSiswa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>📚 Kelas</label>
+                        <input type="text" id="kelas" placeholder="Contoh: 11 IPA 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>🔍 Cari Kode Buku</label>
+                        <div class="form-inline">
+                            <input type="text" id="searchKode">
+                            <button type="button" class="btn-small btn-info" onclick="cariBuku()">Cari</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📖 Nama Buku</label>
+                        <select id="namaBuku" required>
+                            <option value="">Pilih buku...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>📅 Tanggal Pinjam</label>
+                        <input type="date" id="tanggalPinjam" required>
+                    </div>
+                    <button type="submit" class="btn" style="background: #4caf50;">✅ SIMPAN</button>
+                </form>
+            </div>
+
+            <!-- LIHAT PEMINJAMAN -->
+            <div id="lihatPeminjamanPage" class="hidden">
+                <a href="#" class="back-btn" onclick="showPage('mainMenu'); return false;">← Kembali</a>
+                <h2 class="page-title">📋 Data Peminjaman</h2>
+                
+                <div style="margin-bottom: 15px;">
+                    <button class="btn-small btn-info" onclick="filterPeminjaman('all')">Semua</button>
+                    <button class="btn-small btn-warning" onclick="filterPeminjaman('dipinjam')">Dipinjam</button>
+                    <button class="btn-small btn-success" onclick="filterPeminjaman('dikembalikan')">Dikembalikan</button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Siswa</th>
+                            <th>Buku</th>
+                            <th>Tgl Pinjam</th>
+                            <th>Tgl Kembali</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyPeminjaman"></tbody>
+                </table>
+            </div>
+
+            <!-- PENGEMBALIAN -->
+            <div id="pengembalianPage" class="hidden">
+                <a href="#" class="back-btn" onclick="showPage('mainMenu'); return false;">← Kembali</a>
+                <h2 class="page-title">✅ Pengembalian Buku</h2>
+                <div id="pengembalianAlert"></div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Siswa</th>
+                            <th>Buku</th>
+                            <th>Tgl Pinjam</th>
+                            <th>Tgl Hrs Kembali</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyPengembalian"></tbody>
+                </table>
+            </div>
+
+            <!-- DATA SISWA -->
+            <div id="dataSiswaPage" class="hidden">
+                <a href="#" class="back-btn" onclick="showPage('mainMenu'); return false;">← Kembali</a>
+                <h2 class="page-title">👥 Data Siswa</h2>
+                
+                <button class="btn-small btn-success" onclick="showTambahSiswa()">➕ Tambah</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodySiswa"></tbody>
+                </table>
+            </div>
+
+            <!-- DATA BUKU -->
+            <div id="dataBukuPage" class="hidden">
+                <a href="#" class="back-btn" onclick="showPage('mainMenu'); return false;">← Kembali</a>
+                <h2 class="page-title">📚 Data Buku</h2>
+                
+                <button class="btn-small btn-success" onclick="showTambahBuku()">➕ Tambah</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Kode</th>
+                            <th>Nama Buku</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyBuku"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            © 2025 SMAN 47 Jakarta - PKM Universitas Pamulang
+        </div>
+    </div>
+
+    <script>
+        let currentAdmin = null;
+        
+        function initDatabase() {
+            if (!localStorage.getItem('users')) {
+                localStorage.setItem('users', JSON.stringify([
+                    { id: 1, username: 'admin', password: 'admin123' }
+                ]));
+            }
+            if (!localStorage.getItem('siswa')) {
+                localStorage.setItem('siswa', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('buku')) {
+                localStorage.setItem('buku', JSON.stringify([
+                    { id: 1, kode: 'BK001', nama: 'Matematika Kelas 11' },
+                    { id: 2, kode: 'BK002', nama: 'Fisika Dasar' },
+                    { id: 3, kode: 'BK003', nama: 'Kimia Organik' }
+                ]));
+            }
+            if (!localStorage.getItem('peminjaman')) {
+                localStorage.setItem('peminjaman', JSON.stringify([]));
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentAdmin = user;
+                document.getElementById('adminName').textContent = user.username;
+                showPage('mainMenu');
+            } else {
+                showAlert('loginAlert', 'Username atau password salah!', 'error');
+            }
+        }
+
+        function showPage(pageId) {
+            const pages = ['loginPage', 'mainMenu', 'peminjamanPage', 'lihatPeminjamanPage', 'pengembalianPage', 'dataSiswaPage', 'dataBukuPage'];
+            pages.forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            if (pageId === 'lihatPeminjamanPage') loadPeminjaman();
+            if (pageId === 'pengembalianPage') loadPengembalian();
+            if (pageId === 'dataSiswaPage') loadSiswa();
+            if (pageId === 'dataBukuPage') loadBuku();
+            if (pageId === 'peminjamanPage') {
+                document.getElementById('tanggalPinjam').value = new Date().toISOString().split('T')[0];
+                loadDaftarBuku();
+            }
+        }
+
+        function logout() {
+            if (confirm('Yakin logout?')) {
+                currentAdmin = null;
+                showPage('loginPage');
+            }
+        }
+
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 3000);
+        }
+
+        function cariBuku() {
+            const kode = document.getElementById('searchKode').value.trim().toUpperCase();
+            if (!kode) {
+                alert('Masukkan kode buku!');
+                return;
+            }
+            
+            const buku = JSON.parse(localStorage.getItem('buku'));
+            const found = buku.find(b => b.kode.toUpperCase() === kode);
+            
+            const select = document.getElementById('namaBuku');
+            select.innerHTML = '<option value="">Pilih buku...</option>';
+            
+            if (found) {
+                select.innerHTML += `<option value="${found.id}" selected>${found.kode} - ${found.nama}</option>`;
+            } else {
+                alert('Buku tidak ditemukan!');
+            }
+        }
+
+        function loadDaftarBuku() {
+            const buku = JSON.parse(localStorage.getItem('buku'));
+            const select = document.getElementById('namaBuku');
+            select.innerHTML = '<option value="">Pilih buku...</option>';
+            buku.forEach(b => {
+                select.innerHTML += `<option value="${b.id}">${b.kode} - ${b.nama}</option>`;
+            });
+        }
+
+        function submitPeminjaman(e) {
+            e.preventDefault();
+            
+            const namaSiswa = document.getElementById('namaSiswa').value.trim();
+            const kelas = document.getElementById('kelas').value.trim();
+            const bukuId = document.getElementById('namaBuku').value;
+            const tanggal = document.getElementById('tanggalPinjam').value;
+            
+            if (!bukuId) {
+                showAlert('peminjamanAlert', 'Pilih buku!', 'error');
+                return;
+            }
+            
+            const buku = JSON.parse(localStorage.getItem('buku'));
+            const selectedBuku = buku.find(b => b.id == bukuId);
+            
+            const tglPinjam = new Date(tanggal);
+            const tglKembali = new Date(tglPinjam);
+            tglKembali.setDate(tglKembali.getDate() + 3);
+            
+            const peminjaman = JSON.parse(localStorage.getItem('peminjaman'));
+            const newId = peminjaman.length > 0 ? Math.max(...peminjaman.map(p => p.id)) + 1 : 1;
+            
+            peminjaman.push({
+                id: newId,
+                siswa: namaSiswa,
+                kelas: kelas,
+                buku: selectedBuku.nama,
+                kodeBuku: selectedBuku.kode,
+                tanggalPinjam: tanggal,
+                tanggalKembali: tglKembali.toISOString().split('T')[0],
+                status: 'dipinjam',
+                tanggalKembaliAktual: null
+            });
+            
+            localStorage.setItem('peminjaman', JSON.stringify(peminjaman));
+            showAlert('peminjamanAlert', 'Peminjaman berhasil disimpan!', 'success');
+            
+            document.getElementById('namaSiswa').value = '';
+            document.getElementById('kelas').value = '';
+            document.getElementById('searchKode').value = '';
+            loadDaftarBuku();
+        }
+
+        function loadPeminjaman(filter = 'all') {
+            const peminjaman = JSON.parse(localStorage.getItem('peminjaman'));
+            const tbody = document.getElementById('bodyPeminjaman');
+            tbody.innerHTML = '';
+            
+            let filtered = filter === 'all' ? peminjaman : peminjaman.filter(p => p.status === filter);
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Tidak ada data</td></tr>';
+                return;
+            }
+            
+            filtered.reverse().forEach(p => {
+                const tglKembali = p.tanggalKembaliAktual ? new Date(p.tanggalKembaliAktual).toLocaleDateString('id-ID') : '-';
+                const statusColor = p.status === 'dipinjam' ? '#ff9800' : '#4caf50';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.siswa}<br><small>${p.kelas}</small></td>
+                        <td>${p.buku}</td>
+                        <td>${new Date(p.tanggalPinjam).toLocaleDateString('id-ID')}</td>
+                        <td>${tglKembali}</td>
+                        <td><span style="padding: 5px 10px; border-radius: 5px; background: ${statusColor}; color: white; font-size: 11px;">${p.status.toUpperCase()}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterPeminjaman(status) {
+            loadPeminjaman(status);
+        }
+
+        function loadPengembalian() {
+            const peminjaman = JSON.parse(localStorage.getItem('peminjaman'));
+            const tbody = document.getElementById('bodyPengembalian');
+            tbody.innerHTML = '';
+            
+            const dipinjam = peminjaman.filter(p => p.status === 'dipinjam');
+            
+            if (dipinjam.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Tidak ada buku dipinjam</td></tr>';
+                return;
+            }
+            
+            dipinjam.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.siswa}</td>
+                        <td>${p.buku}</td>
+                        <td>${new Date(p.tanggalPinjam).toLocaleDateString('id-ID')}</td>
+                        <td>${new Date(p.tanggalKembali).toLocaleDateString('id-ID')}</td>
+                        <td><button class="btn-small btn-success" onclick="kembalikanBuku(${p.id})">✅ Kembalikan</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function kembalikanBuku(id) {
+            if (confirm('Kembalikan buku?')) {
+                const peminjaman = JSON.parse(localStorage.getItem('peminjaman'));
+                const index = peminjaman.findIndex(p => p.id === id);
+                peminjaman[index].status = 'dikembalikan';
+                peminjaman[index].tanggalKembaliAktual = new Date().toISOString().split('T')[0];
+                localStorage.setItem('peminjaman', JSON.stringify(peminjaman));
+                showAlert('pengembalianAlert', 'Berhasil dikembalikan!', 'success');
+                loadPengembalian();
+            }
+        }
+
+        function loadSiswa() {
+            const siswa = JSON.parse(localStorage.getItem('siswa'));
+            const tbody = document.getElementById('bodySiswa');
+            tbody.innerHTML = '';
+            
+            if (siswa.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Belum ada data</td></tr>';
+                return;
+            }
+            
+            siswa.forEach(s => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s.id}</td>
+                        <td>${s.nama}</td>
+                        <td>${s.kelas}</td>
+                        <td><button class="btn-small btn-danger" onclick="hapusSiswa(${s.id})">🗑️ Hapus</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showTambahSiswa() {
+            const nama = prompt('Nama Siswa:');
+            if (!nama) return;
+            const kelas = prompt('Kelas:');
+            if (!kelas) return;
+            
+            const siswa = JSON.parse(localStorage.getItem('siswa'));
+            const newId = siswa.length > 0 ? Math.max(...siswa.map(s => s.id)) + 1 : 1;
+            siswa.push({ id: newId, nama, kelas });
+            localStorage.setItem('siswa', JSON.stringify(siswa));
+            loadSiswa();
+        }
+
+        function hapusSiswa(id) {
+            if (confirm('Hapus siswa?')) {
+                let siswa = JSON.parse(localStorage.getItem('siswa'));
+                siswa = siswa.filter(s => s.id !== id);
+                localStorage.setItem('siswa', JSON.stringify(siswa));
+                loadSiswa();
+            }
+        }
+
+        function loadBuku() {
+            const buku = JSON.parse(localStorage.getItem('buku'));
+            const tbody = document.getElementById('bodyBuku');
+            tbody.innerHTML = '';
+            
+            if (buku.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Belum ada data</td></tr>';
+                return;
+            }
+            
+            buku.forEach(b => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${b.id}</td>
+                        <td>${b.kode}</td>
+                        <td>${b.nama}</td>
+                        <td><button class="btn-small btn-danger" onclick="hapusBuku(${b.id})">🗑️ Hapus</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showTambahBuku() {
+            const kode = prompt('Kode Buku:');
+            if (!kode) return;
+            const nama = prompt('Nama Buku:');
+            if (!nama) return;
+            
+            const buku = JSON.parse(localStorage.getItem('buku'));
+            const newId = buku.length > 0 ? Math.max(...buku.map(b => b.id)) + 1 : 1;
+            buku.push({ id: newId, kode: kode.toUpperCase(), nama });
+            localStorage.setItem('buku', JSON.stringify(buku));
+            loadBuku();
+        }
+
+        function hapusBuku(id) {
+            if (confirm('Hapus buku?')) {
+                let buku = JSON.parse(localStorage.getItem('buku'));
+                buku = buku.filter(b => b.id !== id);
+                localStorage.setItem('buku', JSON.stringify(buku));
+                loadBuku();
+            }
+        }
+
+        window.onload = function() {
+            initDatabase();
+        };
+    </script>
+</body>
+</html>
